@@ -1,5 +1,9 @@
 package title.dynamic_programming;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author jad
  * @Description: 正则表达式匹配
@@ -12,7 +16,112 @@ public class RegularExpressionMatching {
          * "aasdfasdfasdfasdfas"
          * "aasdf.*asdf.*asdf.*asdf.*s"
          */
-        new RegularExpressionMatching().isMatch("ab", "a.*b");
+//        new RegularExpressionMatching().isMatch("ab", "a.*b");
+
+//        int i = new RegularExpressionMatching().translateNum(18822);
+//        System.out.println(i);
+
+//        new RegularExpressionMatching().dicesProbability(3);
+        new RegularExpressionMatching().maxProfit(new int[]{7, 1, 5, 3, 6, 4});
+    }
+
+    public int maxProfit(int[] prices) {
+        int length = prices.length;
+        if (length == 1) {
+            return 0;
+        }
+        int result = 0;
+        int tmp = 0;
+        for (int i = 1; i < prices.length; i++) {
+            if (tmp == 0) {
+                tmp = Math.max(prices[i] - prices[i - 1], 0);
+            } else {
+                tmp = Math.max(tmp + prices[i] - prices[i - 1], 0);
+            }
+            result = Math.max(result, tmp);
+        }
+        return result;
+    }
+
+    public double[] dicesProbability(int n) {
+        double[] a = new double[6];
+        Arrays.fill(a, 1.0 / 6);
+        double[] tmp = a;
+        for (int i = 2; i <= n; i++) {
+            double[] resp = new double[5 * i + 1];
+            for (int j = 0; j < tmp.length; j++) {
+                for (int k = 1; k <= 6; k++) {
+                    resp[j + k - 1] += tmp[j] * 1 / 6;
+                }
+            }
+            tmp = resp;
+        }
+        return tmp;
+    }
+
+    public int lengthOfLongestSubstring(String s) {
+        Map<Character, Integer> position = new HashMap<>();
+        int resp = 0, tmp = 0, length = s.length();
+        for (int i = 0; i < length; i++) {
+            Integer j = position.getOrDefault(s.charAt(i), -1);
+            position.put(s.charAt(i), i);
+            if (i - j > tmp) {
+                tmp++;
+            } else {
+                tmp = i - j;
+            }
+            resp = Math.max(resp, tmp);
+        }
+        return resp;
+    }
+
+    public int maxValue(int[][] grid) {
+        int m = grid[0].length;
+        int n = grid.length;
+        if (m == 1 && n == 1) {
+            return grid[0][0];
+        }
+        int[][] dp = new int[n][m];
+        dp[0][0] = grid[0][0];
+        //初始化第0排
+        for (int i = 1; i < grid[0].length; i++) {
+            dp[0][i] = dp[0][i - 1] + grid[0][i];
+        }
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (j < 1) {
+                    dp[i][j] = dp[i - 1][j] + grid[i][j];
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]) + grid[i][j];
+                }
+            }
+        }
+        return dp[n - 1][m - 1];
+    }
+
+    public int translateNum(int num) {
+        char[] chars = String.valueOf(num).toCharArray();
+        if (chars.length == 1) {
+            return 1;
+        }
+        int[] dp = new int[chars.length];
+        dp[0] = 1;
+        int m = (chars[0] - 48) * 10 + chars[1] - 48;
+        if (10 <= m && m <= 25) {
+            dp[1] = 2;
+        } else {
+            dp[1] = 1;
+        }
+        for (int i = 2; i < chars.length; i++) {
+            int j = (chars[i - 1] - 48) * 10 + chars[i] - 48;
+            if (10 <= j && j <= 25) {
+                dp[i] = dp[i - 2] + dp[i - 1];
+            } else {
+                dp[i] = dp[i - 1];
+            }
+
+        }
+        return dp[chars.length - 1];
     }
 
     public boolean isMatch(String s, String p) {
