@@ -106,5 +106,47 @@ public class BinTree {
      * 借助变量记录前一个输出的node；  第一次碰到时直接push进栈，第二次碰到时先pop出来，用node的右节点与变量相比，若不同则在push进去，并对其right节点进行遍历，若同或者着为空则直接输出，并修改变量的值
      */
     public void postOrderTraversalNotRecursion(BinTreeNode bt) {
+        if (bt == null) {
+            return;
+        }
+        LinkedList<BinTreeNode> vector = new LinkedList<>();
+        BinTreeNode curr = bt;
+        BinTreeNode pre = null;
+        while (curr != null || !vector.isEmpty()) {
+            while (curr != null) {
+                vector.push(curr);
+                curr = curr.getLeft();
+            }
+            curr = vector.pop();
+            if (curr.getRight() == null || curr.getRight().equals(pre)) {
+                System.out.print(curr.getData());
+                pre = curr;
+                curr = null;
+            } else {
+                vector.push(curr);
+                curr = curr.getRight();
+            }
+        }
+    }
+
+    /**
+     * 层序遍历
+     */
+    public void levelOrderTraversal(BinTreeNode bt) {
+        if (bt == null) {
+            return;
+        }
+        LinkedList<BinTreeNode> vector = new LinkedList<>();
+        vector.add(bt);
+        while (!vector.isEmpty()) {
+            BinTreeNode curr = vector.pollFirst();
+            System.out.println(curr.getData());
+            if (curr.getLeft() != null) {
+                vector.addLast(curr.getLeft());
+            }
+            if (curr.getRight() != null) {
+                vector.addLast(curr.getRight());
+            }
+        }
     }
 }

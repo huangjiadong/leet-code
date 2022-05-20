@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class BinTreeNode {
 
-    private Object data;
+    private Integer data;
 
     private BinTreeNode left;
 
