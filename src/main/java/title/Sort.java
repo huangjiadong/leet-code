@@ -1,6 +1,9 @@
 package title;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,21 +14,72 @@ import java.util.Map;
  */
 public class Sort {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParseException {
         int[] ints = {9, 11, 3, 4, 5, 1, 24, 51, 5, 61, 123};
 //        new Sort().quickSort(ints);
 //        Arrays.stream(ints).forEach(System.out::println);
 //        System.out.println(-1 % 2);
-        int[] arr = new int[]{2, 8, 7, 3, 6, 12, 25, 94, 76, 21, 110, 111, 112, 113};
-        new Sort().heapSort(arr);
-        Arrays.stream(arr).forEach(System.out::println);
-
+//        int[] arr = new int[]{2, 8, 7, 3, 6, 12, 25, 94, 76, 21, 110, 181, 12, 89};
+//        new Sort().dacSort(arr);
+//        Arrays.stream(arr).forEach(System.out::println);
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd");
+        Date parse = sdf.parse("01-01");
+        String format = new SimpleDateFormat("M-d").format(parse);
+        System.out.println(format);
     }
 
 
+    /**
+     * 分治排序
+     * 每次将待排序部分分成两部分，l，r分别指向左、右边部分的开头
+     * 进行比较放入新的数组中
+     *
+     * 递归参数：arr,begin,end,temp
+     * 递归结束：元素个数为1
+     * 递归过程：l、r为左、右部分的开头，k初始值为l，比较arr[l]、arr[r]的值，将较少值放入temp[k++],
+     * 如果一边没有剩余元素可以比较，则直接将另一部分放入temp
+     * 将排好序的部分l到k放入到arr中
+     * 递归出参：void
+     */
     public int[] dacSort(int[] arr) {
-
+        int[] temp = new int[arr.length];
+        dacSortRecursion(arr, 0, arr.length - 1, temp);
+        return arr;
     }
+
+    private void dacSortRecursion(int[] arr, int begin, int end, int[] temp) {
+        if (begin == end) {
+            return;
+        }
+        int mid = (begin + end) / 2;
+        dacSortRecursion(arr, begin, mid, temp);
+        dacSortRecursion(arr, mid + 1, end, temp);
+        //比较两边元素，插入temp
+        int left = begin, right = mid + 1;
+        int k = left;
+        while (left <= mid || right <= end) {
+            if (left > mid) {
+                //左边没了
+                temp[k] = arr[right];
+                right++;
+            } else if (right > end) {
+                //右边没了
+                temp[k] = arr[left];
+                left++;
+            } else if (arr[left] < arr[right]) {
+                temp[k] = arr[left];
+                left++;
+            } else {
+                temp[k] = arr[right];
+                right++;
+            }
+            k++;
+        }
+        if (end + 1 - begin >= 0) {
+            System.arraycopy(temp, begin, arr, begin, end + 1 - begin);
+        }
+    }
+
 
     /**
      * 堆排序
